@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Chatアプリ</title>
+<link rel="stylesheet" href="css/sample.css">
+</head>
+<body>
+<!-- コンテンツ表示画面 -->
+<div>
+    名前:  <input type="text" id="uname">
+</div>
+<div>
+    <textarea name="" id="text" cols="30" rows="10"></textarea>
+    <button id="send">送信</button>
+
+</div>
+<div id="output" class="output"></div>
+
+
+<!--/ コンテンツ表示画面 -->
+<!-- JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!-- JQuery -->
+
+
+<!--** 以下Firebase **-->
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved }
+        from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.8.1/firebase-database.min.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJMq1f0PxwPJcBxjc2eqk2xNZl9IL2ndg",
+      authDomain: "fir-kadai-3969b.firebaseapp.com",
+      projectId: "fir-kadai-3969b",
+      storageBucket: "fir-kadai-3969b.appspot.com",
+      messagingSenderId: "367524432289",
+      appId: "1:367524432289:web:639ffebc51c60e876fa3e0"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    
+    const db = getDatabase(app);
+    const dbRef = ref(db,'chat');
+
+    let d=0
+    const img= ["9001_woody.jpg","9002_bo-peep.jpg","9003_buzz-lightyear.jpg"];
+    $(".imgs").on("click",function(){d=$(this).attr(date-img);
+    });
+
+//MSG送信
+$('#send').on('click',function(){
+    const msg={
+        uname:$('#uname').val(),
+        text:$('#text').val(),
+        icon:d
+    }
+const newPostRef = push(dbRef);
+set(newPostRef,msg);
+    // const uname = $('#uname').val();
+    // const text =$('#text').val();
+});
+
+//テキスト表示
+onChildAdded(dbRef,function(date){
+const msg = date.val();
+const key = date.key;
+const h = `<p id="${key}" class="message">${msg.uname}: ${msg.text}
+    <button class="clear">🗑</button>
+    </p>`;
+$('#output').append(h);
+});
+
+//テキストでEnterで送信
+$('#text').on('keydown',function(e){
+    if(e.keyCode === 13){
+    const msg={
+        uname:$('#uname').val(),
+        text:$('#text').val(),
+    }
+const newPostRef = push(dbRef);
+set(newPostRef,msg);
+    }
+});
+
+//テキスト削除
+$('#clear').on('click','.message', function(){
+    const thisKey = $(this).attr("id");
+        const dltKey = "chat/"+thisKey;
+        remove(ref(db, dltKey));
+  alert('削除しますか？');
+});
+
+onChildRemoved(dbRef, function(data){
+        const key = '#'+data.key;
+        $(key).remove();
+    });
+$("#output").on("click",".message", function(){
+    const dlt = $(this).attr('id');
+    remove(ref(db, "chat/" + dlt));
+});
+
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
